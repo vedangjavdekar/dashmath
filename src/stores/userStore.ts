@@ -1,14 +1,14 @@
-import { ref, reactive, computed } from 'vue';
-import { defineStore } from 'pinia';
+import { ref, reactive } from "vue";
+import { defineStore } from "pinia";
 
-export const useUserStore = defineStore('counter', () => {
+export const useUserStore = defineStore("userData", () => {
 	const userDetails = reactive({
-		email: '',
-		password: '',
-		confirmPassword: '',
+		email: "",
+		password: "",
+		confirmPassword: "",
 	});
 
-	const currentMode = ref('Login');
+	const currentMode = ref("Login");
 	const loggedIn = ref(false);
 
 	function setMode(newMode: string) {
@@ -16,9 +16,13 @@ export const useUserStore = defineStore('counter', () => {
 	}
 
 	function clearData() {
-		userDetails.email = '';
-		userDetails.password = '';
-		userDetails.confirmPassword = '';
+		userDetails.email = "";
+		userDetails.password = "";
+		userDetails.confirmPassword = "";
+	}
+
+	function setLoggedIn(login: boolean) {
+		loggedIn.value = login;
 	}
 
 	return {
@@ -27,5 +31,6 @@ export const useUserStore = defineStore('counter', () => {
 		loggedIn,
 		setMode,
 		clearData,
+		setLoggedIn,
 	};
 });

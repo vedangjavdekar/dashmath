@@ -45,8 +45,8 @@ const signUp = async () => {
 				case "auth/email-already-in-use": {
 					signUpError.value =
 						"User with this email already exists. Login or use another email address.";
-					store.clearData();
 					v$.value.$reset();
+					store.clearData();
 					break;
 				}
 			}

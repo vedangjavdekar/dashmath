@@ -58,7 +58,9 @@ const submitForm = async () => {
 };
 
 const isDiasbled = computed(() => {
-	return store.userDetails.email === "" || store.userDetails.password === "";
+	return (
+		store.userDetails.email === "" || store.userDetails.password.length < 6
+	);
 });
 
 onActivated(() => {
