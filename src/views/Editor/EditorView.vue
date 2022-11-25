@@ -21,8 +21,10 @@ onMounted(() => {
 </script>
 
 <template>
-	<div class="grid grid-rows-[auto_minmax(0,1fr)] w-full h-screen">
-		<div class="row-span-1 col-span-9">
+	<div
+		class="grid grid-rows-[auto_minmax(0,1fr)] grid-flow-row gap-1 w-full h-screen"
+	>
+		<div class="row-span-1 col-span-12">
 			<div class="flex justify-between items-center">
 				<div class="flex justify-start items-center">
 					<img
@@ -45,17 +47,19 @@ onMounted(() => {
 				</div>
 			</div>
 		</div>
-		<div class="row-span-5">
+		<div class="row-span-5 col-span-1">
 			<TileProperties />
 		</div>
-		<div class="row-span-5 col-span-6"></div>
+		<div class="row-span-5 col-span-10">
+			<div class="bg-black w-full h-20"></div>
+		</div>
 		<div
-			class="row-span-5 col-span-2 flex flex-col justify-start items-center w-full"
+			class="row-span-5 col-span-1 flex flex-col justify-start items-center w-full"
 		>
-			<div class="h-1/2 w-full">
+			<div class="h-1/3 w-full overflow-y-auto">
 				<LayerView />
 			</div>
-			<div class="h-1/2 w-full">
+			<div class="h-2/3 w-full">
 				<TileCatalogue />
 			</div>
 		</div>

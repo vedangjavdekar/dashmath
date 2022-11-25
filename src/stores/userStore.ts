@@ -1,8 +1,9 @@
 import { ref, reactive } from "vue";
 import { defineStore } from "pinia";
+import type { UserData } from "@/types/userTypes";
 
 export const useUserStore = defineStore("userData", () => {
-	const userDetails = reactive({
+	const userDetails = reactive<UserData>({
 		email: "",
 		password: "",
 		confirmPassword: "",
