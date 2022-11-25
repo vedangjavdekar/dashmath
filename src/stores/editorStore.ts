@@ -11,6 +11,7 @@ export const useEditorStore = defineStore("editorData", () => {
 
 	async function fetchInitialData() {
 		layerState.layers = [];
+		tileState.tiles = [];
 		const db = getFirestore();
 		const layersQuerySnapshot = await getDocs(collection(db, "/layers"));
 		layersQuerySnapshot.forEach((doc) => {
@@ -35,6 +36,13 @@ export const useEditorStore = defineStore("editorData", () => {
 	}
 
 	function setSelectedLayer(layerIndex: number) {
+		if (
+			layerIndex > 0 &&
+			layerIndex < layerState.layers.length &&
+			currSelectedLayer.value != layerIndex
+		) {
+			currSelectedTile.value = "";
+		}
 		currSelectedLayer.value = layerIndex;
 		layerState.layers[currSelectedLayer.value].visible = true;
 	}
