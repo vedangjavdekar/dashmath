@@ -1,8 +1,15 @@
 <script setup lang="ts">
 import Section from "../Base/Section.vue";
 import { useEditorStore } from "@/stores/editorStore";
+import { useLevelStore } from "@/stores/levelStore";
 
 const editorStore = useEditorStore();
+const levelStore = useLevelStore();
+
+const handleChangeVisibility = (index: number, newVisibility: boolean) => {
+	editorStore.changeLayerVisibility(index, newVisibility);
+	levelStore.changeLayerVisibility(index, newVisibility);
+};
 </script>
 <template>
 	<Section>
@@ -29,10 +36,7 @@ const editorStore = useEditorStore();
 									: ''
 							}`"
 							@click="
-								editorStore.changeLayerVisibility(
-									index,
-									!layer.visible
-								)
+								handleChangeVisibility(index, !layer.visible)
 							"
 						>
 							<v-icon

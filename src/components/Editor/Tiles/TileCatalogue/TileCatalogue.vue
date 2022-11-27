@@ -9,7 +9,7 @@ const editorStore = useEditorStore();
 	<Section>
 		<template v-slot:title>Tiles</template>
 		<template v-slot:content>
-			<div class="inline-grid grid-cols-2">
+			<div class="inline-grid grid-cols-3">
 				<div
 					v-for="(
 						tile, index

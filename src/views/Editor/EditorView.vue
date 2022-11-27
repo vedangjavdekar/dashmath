@@ -5,7 +5,9 @@ import LayerView from "@/components/Editor/Layers/LayerView.vue";
 import TileCatalogue from "@/components/Editor/Tiles/TileCatalogue/TileCatalogue.vue";
 import TileProperties from "@/components/Editor/Tiles/TileProperties/TileProperties.vue";
 import { onMounted } from "vue";
-import { useEditorStore } from "@/stores/editorStore";
+import { useEditorStore, toolBarOptions } from "@/stores/editorStore";
+import Simulator from "@/components/Editor/Simulator/Simulator.vue";
+import ToolBarButton from "@/components/Editor/Base/ToolbarButton.vue";
 
 let auth;
 const SignOutUser = () => {
@@ -47,11 +49,19 @@ onMounted(() => {
 				</div>
 			</div>
 		</div>
-		<div class="row-span-5 col-span-1">
-			<TileProperties />
+		<div class="row-span-5 col-span-10 justify-start items-center">
+			<ul class="flex justify-start items-center mb-2">
+				<ToolBarButton
+					v-for="(toolBarOption, index) in toolBarOptions"
+					:toolBarOption="toolBarOption"
+					:index="index"
+					:key="index"
+				/>
+			</ul>
+			<Simulator />
 		</div>
-		<div class="row-span-5 col-span-10">
-			<div class="bg-black w-full h-20"></div>
+		<div class="row-span-5 col-span-1 min-w-[250px]">
+			<TileProperties />
 		</div>
 		<div
 			class="row-span-5 col-span-1 flex flex-col justify-start items-center w-full"

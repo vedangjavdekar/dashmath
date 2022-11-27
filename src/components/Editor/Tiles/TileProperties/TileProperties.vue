@@ -4,6 +4,6 @@ import Section from "../../Base/Section.vue";
 <template>
 	<Section>
 		<template v-slot:title>Tile Properties</template>
-		<template v-slot:content> Data incoming </template>
+		<template v-slot:content> Nothing to Show here. </template>
 	</Section>
 </template>

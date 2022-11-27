@@ -1,5 +1,3 @@
-import type { W } from "vitest/dist/global-58e8e951";
-
 export interface LayerDetails {
 	id: string;
 	name: string;
@@ -17,4 +15,12 @@ export interface TileDetails {
 	defaultValue?: number;
 	minValue?: number;
 	maxValue?: number;
+}
+
+export interface ToolBarOption {
+	actionName: string;
+	icon: string;
+	text: string;
+	selectable: boolean;
+	keys: string[];
 }

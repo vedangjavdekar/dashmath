@@ -7,7 +7,16 @@ import "./style.css";
 
 //Icons
 import { OhVueIcon, addIcons } from "oh-vue-icons";
-import { BiEyeSlashFill, BiEyeFill } from "oh-vue-icons/icons";
+import {
+	BiEyeSlashFill,
+	BiEyeFill,
+	BiPlusSquare,
+	BiTrash,
+	BiSave,
+	BiPencil,
+	BiBrush,
+	BiGear,
+} from "oh-vue-icons/icons";
 
 import { initializeApp } from "firebase/app";
 
@@ -27,7 +36,16 @@ const app = createApp(App);
 app.use(createPinia());
 app.use(router);
 
-addIcons(BiEyeFill, BiEyeSlashFill);
+addIcons(
+	BiEyeFill,
+	BiEyeSlashFill,
+	BiPlusSquare,
+	BiTrash,
+	BiSave,
+	BiPencil,
+	BiBrush,
+	BiGear
+);
 
 app.component("v-icon", OhVueIcon);
 app.mount("#app");
