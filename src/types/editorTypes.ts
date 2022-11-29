@@ -16,11 +16,3 @@ export interface TileDetails {
 	minValue?: number;
 	maxValue?: number;
 }
-
-export interface ToolBarOption {
-	actionName: string;
-	icon: string;
-	text: string;
-	selectable: boolean;
-	keys: string[];
-}

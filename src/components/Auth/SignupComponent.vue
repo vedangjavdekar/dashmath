@@ -36,6 +36,7 @@ const signUp = async () => {
 			signUpError.value = "";
 			signUpSuccessful.value = true;
 			setTimeout(() => {
+				v$.value.$reset();
 				store.clearData();
 				store.setMode("Login");
 			}, 1000);

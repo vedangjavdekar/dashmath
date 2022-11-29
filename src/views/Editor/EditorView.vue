@@ -5,7 +5,8 @@ import LayerView from "@/components/Editor/Layers/LayerView.vue";
 import TileCatalogue from "@/components/Editor/Tiles/TileCatalogue/TileCatalogue.vue";
 import TileProperties from "@/components/Editor/Tiles/TileProperties/TileProperties.vue";
 import { onMounted } from "vue";
-import { useEditorStore, toolBarOptions } from "@/stores/editorStore";
+import { useEditorStore } from "@/stores/editorStore";
+import { toolBarOptions } from "@/stores/toolBarOptions";
 import Simulator from "@/components/Editor/Simulator/Simulator.vue";
 import ToolBarButton from "@/components/Editor/Base/ToolbarButton.vue";
 
@@ -52,13 +53,21 @@ onMounted(() => {
 		<div class="row-span-5 col-span-10 justify-start items-center">
 			<ul class="flex justify-start items-center mb-2">
 				<ToolBarButton
-					v-for="(toolBarOption, index) in toolBarOptions"
+					v-for="(toolBarOption, index) in toolBarOptions.filter(
+						(tool) => tool.visibleInToolbar
+					)"
 					:toolBarOption="toolBarOption"
 					:index="index"
 					:key="index"
 				/>
 			</ul>
 			<Simulator />
+			<div class="flex justify-start bg-gray-500 text-white">
+				<span class="mr-2"><b>Left Mouse Button : </b>Draw </span>
+				<span class="mr-2"><b>Right Mouse Button : </b>Erase </span>
+				<span class="mr-2"><b>W : </b>Select Next Tile </span>
+				<span class="mr-2"><b>Q : </b>Select Previous Tile </span>
+			</div>
 		</div>
 		<div class="row-span-5 col-span-1 min-w-[250px]">
 			<TileProperties />

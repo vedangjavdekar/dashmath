@@ -31,6 +31,7 @@ const submitForm = async () => {
 		store.userDetails.password
 	)
 		.then((data) => {
+			v$.value.$reset();
 			store.clearData();
 			router.push("/editor");
 		})

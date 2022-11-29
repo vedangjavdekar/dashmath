@@ -7,9 +7,7 @@ const editorStore = useEditorStore();
 const props = defineProps<{ toolBarOption: ToolBarOption; index: number }>();
 
 const handleButtonClick = () => {
-	if (props.toolBarOption.selectable) {
-		editorStore.handleSelectNewTool(props.index);
-	}
+	editorStore.handleSelectNewTool(props.index);
 };
 </script>
 <template>

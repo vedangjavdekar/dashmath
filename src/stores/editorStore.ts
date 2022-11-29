@@ -2,49 +2,8 @@ import { ref, reactive } from "vue";
 import { defineStore } from "pinia";
 import { collection, getFirestore, getDocs } from "firebase/firestore";
 import { useLevelStore } from "./levelStore";
-import type {
-	LayerDetails,
-	TileDetails,
-	ToolBarOption,
-} from "@/types/editorTypes";
-
-export const toolBarOptions: ToolBarOption[] = [
-	{
-		icon: "bi-trash",
-		text: "Clear",
-		selectable: false,
-		actionName: "clear",
-		keys: [],
-	},
-	{
-		icon: "bi-save",
-		text: "Save",
-		selectable: false,
-		actionName: "save",
-		keys: [],
-	},
-	{
-		icon: "bi-pencil",
-		text: "Draw (D)",
-		selectable: true,
-		actionName: "draw",
-		keys: ["D"],
-	},
-	{
-		icon: "bi-brush",
-		text: "Paint (S)",
-		selectable: true,
-		actionName: "paint",
-		keys: ["S"],
-	},
-	{
-		icon: "bi-gear",
-		text: "Edit (E)",
-		selectable: true,
-		actionName: "edit",
-		keys: ["E"],
-	},
-];
+import type { LayerDetails, TileDetails } from "@/types/editorTypes";
+import { toolBarOptions } from "./toolBarOptions";
 
 export const useEditorStore = defineStore("editorData", () => {
 	const tileState = reactive<{ tiles: TileDetails[] }>({ tiles: [] });
@@ -100,6 +59,8 @@ export const useEditorStore = defineStore("editorData", () => {
 		const tiles = getTilesForCurrSelectedLayer();
 		if (tiles.length > 0) {
 			currSelectedTile.value = tiles[0].id;
+		} else {
+			currSelectedTile.value = "";
 		}
 	}
 
@@ -121,6 +82,14 @@ export const useEditorStore = defineStore("editorData", () => {
 		});
 	}
 
+	function getTileById(id: string) {
+		return tileState.tiles.find((tile) => tile.id === id);
+	}
+
+	function getTileByName(name: string) {
+		return tileState.tiles.find((tile) => tile.name === name);
+	}
+
 	function setSelectedTile(id: string) {
 		currSelectedTile.value = id;
 	}
@@ -130,6 +99,17 @@ export const useEditorStore = defineStore("editorData", () => {
 		if (toolBarOptions[toolIndex].selectable) {
 			currSelectedTool.value = toolIndex;
 			levelStore.handleLevelToolAction(toolIndex);
+		} else {
+			const { actionName } = toolBarOptions[toolIndex];
+			if (actionName === "nextTile") {
+				selectNextTile();
+			} else if (actionName === "prevTile") {
+				selectPreviousTile();
+			} else if (actionName === "clear") {
+				levelStore.clearLevel();
+			} else if (actionName === "validate") {
+				levelStore.validate();
+			}
 		}
 	}
 
@@ -148,6 +128,38 @@ export const useEditorStore = defineStore("editorData", () => {
 			(tile) => tile.id === currSelectedTile.value
 		);
 	}
+
+	function selectNextTile() {
+		const currTiles = getTilesForCurrSelectedLayer();
+		if (currTiles !== undefined) {
+			let index = currTiles.findIndex((tile) => {
+				return tile.id === currSelectedTile.value;
+			});
+
+			if (index !== -1) {
+				currSelectedTile.value =
+					currTiles[(index + 1) % currTiles.length].id;
+			}
+		}
+	}
+
+	function selectPreviousTile() {
+		const currTiles = getTilesForCurrSelectedLayer();
+		if (currTiles !== undefined) {
+			let index = currTiles.findIndex((tile) => {
+				return tile.id === currSelectedTile.value;
+			});
+
+			if (index !== -1) {
+				index -= 1;
+				if (index < 0) {
+					index += currTiles.length;
+				}
+				currSelectedTile.value = currTiles[index % currTiles.length].id;
+			}
+		}
+	}
+
 	return {
 		currSelectedLayer,
 		currSelectedTile,
@@ -161,10 +173,14 @@ export const useEditorStore = defineStore("editorData", () => {
 		setSelectedLayer,
 		setSelectedTile,
 		handleSelectNewTool,
+		selectNextTile,
+		selectPreviousTile,
 
 		// Getters
 		getTilesForCurrSelectedLayer,
 		getAllLayers,
+		getTileById,
+		getTileByName,
 		getCurrentTileColor,
 		getCurrentTile,
 	};

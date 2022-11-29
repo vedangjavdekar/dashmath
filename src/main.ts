@@ -16,6 +16,7 @@ import {
 	BiPencil,
 	BiBrush,
 	BiGear,
+	BiShieldCheck,
 } from "oh-vue-icons/icons";
 
 import { initializeApp } from "firebase/app";
@@ -44,7 +45,8 @@ addIcons(
 	BiSave,
 	BiPencil,
 	BiBrush,
-	BiGear
+	BiGear,
+	BiShieldCheck
 );
 
 app.component("v-icon", OhVueIcon);

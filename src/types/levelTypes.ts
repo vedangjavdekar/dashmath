@@ -1,9 +1,7 @@
-import type Phaser from "phaser";
-
 export interface LevelTileData {
-	tileImage: Phaser.GameObjects.Image;
 	gridX: number;
 	gridY: number;
+	tileId: string;
 	hasValue: boolean;
 	value: number;
 }

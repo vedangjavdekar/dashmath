@@ -1,5 +1,6 @@
-import { useEditorStore, toolBarOptions } from "@/stores/editorStore";
+import { useEditorStore } from "@/stores/editorStore";
 import { useLevelStore } from "@/stores/levelStore";
+import { toolBarOptions } from "@/stores/toolBarOptions";
 import { Scene } from "phaser";
 
 export default class EditorScene extends Scene {
@@ -15,9 +16,6 @@ export default class EditorScene extends Scene {
 	mouse2Down: boolean = false; //Right
 	mouse3Down: boolean = false; //Middle Mouse
 
-	debugText?: Phaser.GameObjects.Text;
-
-	layerGroup?: Phaser.GameObjects.Group;
 	cursorTile?: Phaser.GameObjects.Image;
 
 	constructor() {
@@ -30,8 +28,15 @@ export default class EditorScene extends Scene {
 		const gridY =
 			this.CELL_SIZE * (0.5 + Math.floor(pointerY / this.CELL_SIZE));
 
-		this.debugText?.setText(`X: ${gridX}, Y:${gridY}`);
+		this.levelStore.debugText
+			?.setText(`X: ${gridX}, Y:${gridY}`)
+			.setColor("#232323");
 		return { gridX, gridY };
+	}
+	handleEditTile(pointerX: number, pointerY: number) {
+		const { gridX, gridY } = this.getGridCoordinates(pointerX, pointerY);
+
+		this.levelStore.setTileForEdit(gridX, gridY);
 	}
 
 	handleSpawnNewTile(pointerX: number, pointerY: number) {
@@ -44,21 +49,20 @@ export default class EditorScene extends Scene {
 				gridY
 			)
 		) {
-			const tile = this.layerGroup?.getFirstDead(
-				true,
-				gridX,
-				gridY,
-				"tile"
-			) as Phaser.GameObjects.Image;
-
-			tile.setActive(true);
-			tile.setVisible(true);
-
 			const currTile = this.editorStore.getCurrentTile();
 
-			if (!currTile) {
+			if (currTile === undefined) {
 				return;
 			}
+
+			const tile = this.levelStore.addTile(
+				this.editorStore.currSelectedTile,
+				this.editorStore.currSelectedLayer,
+				gridX,
+				gridY,
+				currTile.hasValue,
+				currTile.defaultValue
+			);
 
 			const color = parseInt(
 				currTile ? currTile.color.substring(1) : "ffffff",
@@ -81,15 +85,6 @@ export default class EditorScene extends Scene {
 				ease: "Cubic",
 				duration: 200,
 			});
-
-			this.levelStore.addTile(
-				tile,
-				this.editorStore.currSelectedLayer,
-				gridX,
-				gridY,
-				currTile.hasValue,
-				currTile.defaultValue
-			);
 		}
 	}
 	handleRemoveTileAt(pointerX: number, pointerY: number) {
@@ -123,15 +118,21 @@ export default class EditorScene extends Scene {
 		}
 	}
 	init() {
-		this.layerGroup = this.add.group({ defaultKey: "tile" });
+		this.levelStore.setLayerGroup(
+			this.add.group({
+				defaultKey: "tile",
+			})
+		);
+
+		this.levelStore.setDebugText(
+			this.add.text(0, 0, "").setColor("#232323").setDepth(10)
+		);
 		toolBarOptions.forEach((toolBarOption, index) => {
-			if (toolBarOption.selectable) {
-				toolBarOption.keys.forEach((key) => {
-					this.input.keyboard.on(`keydown-${key}`, () =>
-						this.editorStore.handleSelectNewTool(index)
-					);
-				});
-			}
+			toolBarOption.keys.forEach((key) => {
+				this.input.keyboard.on(`keydown-${key}`, () =>
+					this.editorStore.handleSelectNewTool(index)
+				);
+			});
 		});
 
 		this.input.mouse.disableContextMenu();
@@ -141,10 +142,14 @@ export default class EditorScene extends Scene {
 			this.mouse2Down = pointer.button === 2;
 			this.mouse3Down = pointer.button === 1;
 
-			if (this.mouse1Down) {
-				this.handleSpawnNewTile(pointer.x, pointer.y);
-			} else if (this.mouse2Down) {
-				this.handleRemoveTileAt(pointer.x, pointer.y);
+			if (this.levelStore.currMode !== "edit") {
+				if (this.mouse1Down) {
+					this.handleSpawnNewTile(pointer.x, pointer.y);
+				} else if (this.mouse2Down) {
+					this.handleRemoveTileAt(pointer.x, pointer.y);
+				}
+			} else {
+				this.handleEditTile(pointer.x, pointer.y);
 			}
 		});
 
@@ -166,6 +171,9 @@ export default class EditorScene extends Scene {
 				pointer.y
 			);
 			this.cursorTile?.setPosition(gridX, gridY);
+			if (this.levelStore.currMode === "edit") {
+				return;
+			}
 			if (this.levelStore.currMode === "paint") {
 				if (this.mouse1Down) {
 					this.handleSpawnNewTile(pointer.x, pointer.y);
@@ -175,18 +183,11 @@ export default class EditorScene extends Scene {
 			}
 		});
 
-		this.debugText = this.add
-			.text(0, 0, "Debug Text")
-			.setColor("#232323")
-			.setDepth(10);
-
 		this.cursorTile = this.add.image(-32, -32, "tile");
 		this.cursorTile.setDisplaySize(this.CELL_SIZE, this.CELL_SIZE);
 		this.cursorTile.setTint(0);
 		this.cursorTile.setAlpha(0.25);
 	}
-
-	create() {}
 
 	update() {
 		this.canInteract = this.editorStore.isInitialized;
