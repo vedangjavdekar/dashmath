@@ -69,7 +69,7 @@ onMounted(() => {
 				<span class="mr-2"><b>Q : </b>Select Previous Tile </span>
 			</div>
 		</div>
-		<div class="row-span-5 col-span-1 min-w-[250px]">
+		<div class="row-span-5 col-span-1 w-full">
 			<TileProperties />
 		</div>
 		<div

@@ -9,6 +9,7 @@ export interface TileDetails {
 	id: string;
 	name: string;
 	boardName: string;
+	description: string;
 	layer: number;
 	color: string;
 	hasValue: boolean;
