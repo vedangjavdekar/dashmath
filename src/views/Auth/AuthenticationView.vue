@@ -1,18 +1,16 @@
 <script setup lang="ts">
-import LoginComponent from '@/components/Auth/LoginComponent.vue';
-import SignupComponent from '@/components/Auth/SignupComponent.vue';
+import LoginComponent from "@/components/Auth/LoginComponent.vue";
+import SignupComponent from "@/components/Auth/SignupComponent.vue";
 
-import { useUserStore } from '@/stores/userStore';
-import { computed } from 'vue';
+import { useUserStore } from "@/stores/userStore";
+import { computed } from "vue";
 
 const store = useUserStore();
 
-const components = [LoginComponent, SignupComponent];
-
 const currentComponent = computed(() => {
-	if (store.currentMode === 'Login') {
+	if (store.currentMode === "Login") {
 		return LoginComponent;
-	} else if (store.currentMode === 'SignUp') {
+	} else {
 		return SignupComponent;
 	}
 });
@@ -36,8 +34,8 @@ const changeMode = (newMode: string) => {
 				<img src="../../assets/logo.svg" alt="" class="w-8 mr-2" />
 			</div>
 			<div class="w-full text-center">
-				Please login or create a new account to proceed to an exciting level
-				editor
+				Please login or create a new account to proceed to an exciting
+				level editor
 			</div>
 		</div>
 		<div class="my-6 w-1/3">

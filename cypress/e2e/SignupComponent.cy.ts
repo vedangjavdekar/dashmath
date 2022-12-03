@@ -10,9 +10,9 @@ describe("Signup Tests", () => {
 			`${Cypress.config("baseUrl")}/authentication`
 		);
 
-		cy.contains("Signup").click().wait(400);
+		cy.contains("Signup").click();
 
-		cy.get("#email").type(testEmail);
+		cy.get("#email").wait(400).type(testEmail);
 		cy.get("#btn_submit").should("be.disabled");
 
 		cy.get("#password").type(testPassword);

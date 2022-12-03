@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import Section from "../Base/Section.vue";
 import { useEditorStore } from "@/stores/editorStore";
 import { useLevelStore } from "@/stores/levelStore";
+import SectionComponent from "../Base/SectionComponent.vue";
 
 const editorStore = useEditorStore();
 const levelStore = useLevelStore();
@@ -12,7 +12,7 @@ const handleChangeVisibility = (index: number, newVisibility: boolean) => {
 };
 </script>
 <template>
-	<Section>
+	<SectionComponent>
 		<template v-slot:title>Layers</template>
 		<template v-slot:content>
 			<ul v-show="editorStore.getAllLayers().length > 0">
@@ -69,5 +69,5 @@ const handleChangeVisibility = (index: number, newVisibility: boolean) => {
 				</li>
 			</ul>
 		</template>
-	</Section>
+	</SectionComponent>
 </template>
