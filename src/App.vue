@@ -1,7 +1,6 @@
 <script setup lang="ts">
-import type { findProp } from "@vue/compiler-core";
 import { onMounted } from "vue";
-import { RouterLink, RouterView } from "vue-router";
+import { RouterView } from "vue-router";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { useUserStore } from "@/stores/userStore";
 import router from "./router";

@@ -4,34 +4,33 @@ import { useEditorStore } from "./editorStore";
 import type { LevelTileData } from "@/types/levelTypes";
 import type { TileDetails } from "@/types/editorTypes";
 import { toolBarOptions } from "./toolBarOptions";
+import DashMathEventEmitter from "@/components/Editor/Game/events/DashMathEventEmitter";
+import { DashMathEvents } from "@/components/Editor/Game/events/eventConstants";
+import type { OnValidateParameters } from "@/components/Editor/Game/events/eventParameters";
 
 export const useLevelStore = defineStore("levelData", () => {
 	const levelTiles = reactive<{ tiles: Array<LevelTileData[]> }>({
 		tiles: [],
 	});
 	const currMode = ref("");
-	const layerGroup = ref<Phaser.GameObjects.Group>();
-	const debugText = ref<Phaser.GameObjects.Text>();
 	const currEditTile = ref<LevelTileData>();
 	const currEditTileDetails = ref<TileDetails>();
 
 	function initializeLayers(layerCount: number) {
 		levelTiles.tiles = [];
-		for (var i = 0; i < layerCount; ++i) {
+		for (let i = 0; i < layerCount; ++i) {
 			levelTiles.tiles.push([]);
 		}
 	}
 
-	function setLayerGroup(group: Phaser.GameObjects.Group) {
-		layerGroup.value = group;
-	}
-
-	function setDebugText(text: Phaser.GameObjects.Text) {
-		debugText.value = text;
-	}
-
 	function handleLevelToolAction(toolIndex: number) {
 		currMode.value = toolBarOptions[toolIndex].actionName;
+		if (currMode.value !== "edit") {
+			currEditTile.value = undefined;
+			currEditTileDetails.value = undefined;
+		}
+		const eventEmitter = DashMathEventEmitter.getInstance();
+		eventEmitter.emit(DashMathEvents.TOOL_MODE_CHANGED);
 	}
 
 	function changeLayerVisibility(layerIndex: number, visible: boolean) {
@@ -44,12 +43,11 @@ export const useLevelStore = defineStore("levelData", () => {
 			layerIndex < levelTiles.tiles.length
 		) {
 			if (levelTiles.tiles[layerIndex].length > 0) {
-				layerGroup.value?.getChildren().forEach((gameObj) => {
-					if ((gameObj.getData("layer") as number) === layerIndex) {
-						(gameObj as Phaser.GameObjects.Image).setVisible(
-							visible
-						);
-					}
+				console.log("Change visibility Event emitted");
+				const eventEmitter = DashMathEventEmitter.getInstance();
+				eventEmitter.emit(DashMathEvents.CHANGE_LAYER_VISIBILITY, {
+					layerIndex,
+					visible,
 				});
 			}
 		}
@@ -63,7 +61,7 @@ export const useLevelStore = defineStore("levelData", () => {
 		hasValue: boolean,
 		value?: number
 	) {
-		levelTiles.tiles[layerIndex].push({
+		const newSize = levelTiles.tiles[layerIndex].push({
 			gridX,
 			gridY,
 			tileId,
@@ -71,36 +69,13 @@ export const useLevelStore = defineStore("levelData", () => {
 			value: value ? value : 0,
 		});
 
-		const tile = layerGroup.value?.getFirstDead(
-			true,
-			gridX,
-			gridY,
-			"tile"
-		) as Phaser.GameObjects.Image;
-
-		tile.setData("layer", layerIndex);
-		tile.setData("gridPosition", { gridX, gridY });
-		tile.setDepth(layerIndex);
-		tile.setActive(true);
-		tile.setVisible(true);
-
-		return tile;
+		return levelTiles.tiles[layerIndex][newSize - 1];
 	}
 
 	function removeTile(layerIndex: number, gridX: number, gridY: number) {
 		if (!levelTiles.tiles) {
-			return true;
+			return false;
 		}
-
-		const tile = layerGroup.value?.getChildren().find((gameObj) => {
-			const layer = gameObj.getData("layer");
-			const gridPosition = gameObj.getData("gridPosition");
-			return (
-				layer === layerIndex &&
-				gridPosition.gridX === gridX &&
-				gridPosition.gridY === gridY
-			);
-		});
 
 		if (layerIndex === 0) {
 			for (let i = 1; i < levelTiles.tiles.length; i++) {
@@ -108,7 +83,7 @@ export const useLevelStore = defineStore("levelData", () => {
 					return tileObj.gridX === gridX && tileObj.gridY === gridY;
 				});
 				if (index !== -1) {
-					return undefined;
+					return false;
 				}
 			}
 		}
@@ -119,7 +94,7 @@ export const useLevelStore = defineStore("levelData", () => {
 			}
 		);
 
-		return tile;
+		return true;
 	}
 
 	function checkForTileAt(layerIndex: number, gridX: number, gridY: number) {
@@ -166,6 +141,14 @@ export const useLevelStore = defineStore("levelData", () => {
 		}
 	}
 
+	function editCurrentTileValue(newValue: number) {
+		if (currEditTile.value !== undefined) {
+			currEditTile.value.value = newValue;
+			const eventEmitter = DashMathEventEmitter.getInstance();
+			eventEmitter.emit(DashMathEvents.ON_TILE_VALUE_CHANGED);
+		}
+	}
+
 	function clearLevel() {
 		console.log("clear level");
 		const layers = levelTiles.tiles.length;
@@ -173,9 +156,11 @@ export const useLevelStore = defineStore("levelData", () => {
 			levelTiles.tiles[i] = [];
 		}
 
-		layerGroup.value?.getChildren().forEach((child) => {
-			layerGroup.value?.killAndHide(child);
-		});
+		currEditTile.value = undefined;
+		currEditTileDetails.value = undefined;
+
+		const eventEmitter = DashMathEventEmitter.getInstance();
+		eventEmitter.emit(DashMathEvents.CLEAR_LEVEL);
 	}
 
 	function validate() {
@@ -187,42 +172,43 @@ export const useLevelStore = defineStore("levelData", () => {
 		let playerStartFound = false;
 		let goalFound = false;
 		if (playerStart) {
-			playerStartFound = hasTile(1, playerStart.id);
+			playerStartFound = hasTile(1, playerStart.id) === 1;
 		}
 
 		if (goal) {
-			goalFound = hasTile(1, goal.id);
+			goalFound = hasTile(1, goal.id) > 0;
 		}
 
+		const eventEmitter = DashMathEventEmitter.getInstance();
+		const eventParams: OnValidateParameters = {
+			message: "",
+			color: "",
+		};
 		if (!playerStartFound) {
-			debugText.value
-				?.setText("Player Start Missing")
-				.setColor("#ff6b66");
+			eventParams.message =
+				"Make sure there's only one player start in the level";
+			eventParams.color = "#ff6b66";
 		} else if (!goalFound) {
-			debugText.value
-				?.setText("Level should have at least one goal")
-				.setColor("#ff6b66");
+			eventParams.message = "Level should have at least one goal";
+			eventParams.color = "#ff6b66";
 		} else {
-			debugText.value?.setText("All Good!").setColor("#69c99b");
+			eventParams.message = "All Good!";
+			eventParams.color = "#69c99b";
 		}
+		eventEmitter.emit(DashMathEvents.ON_VALIDATE, eventParams);
 	}
 
 	function hasTile(layerIndex: number, tileId: string) {
-		return (
-			levelTiles.tiles[layerIndex].findIndex(
-				(tile) => tile.tileId === tileId
-			) !== -1
-		);
+		return levelTiles.tiles[layerIndex].filter(
+			(tile) => tile.tileId === tileId
+		).length;
 	}
 
 	return {
 		currMode,
 		currEditTile,
 		currEditTileDetails,
-		debugText,
 		initializeLayers,
-		setLayerGroup,
-		setDebugText,
 		handleLevelToolAction,
 		addTile,
 		removeTile,
@@ -231,5 +217,6 @@ export const useLevelStore = defineStore("levelData", () => {
 		setTileForEdit,
 		clearLevel,
 		validate,
+		editCurrentTileValue,
 	};
 });

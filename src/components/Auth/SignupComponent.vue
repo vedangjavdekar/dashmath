@@ -32,7 +32,7 @@ const signUp = async () => {
 		store.userDetails.email,
 		store.userDetails.password
 	)
-		.then((_) => {
+		.then(() => {
 			signUpError.value = "";
 			signUpSuccessful.value = true;
 			setTimeout(() => {

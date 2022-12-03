@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import Section from "../../Base/Section.vue";
+import SectionComponent from "../../Base/SectionComponent.vue";
 import { useLevelStore } from "@/stores/levelStore";
-import { onMounted, ref } from "vue";
-import { computed } from "@vue/reactivity";
+import { computed } from "vue";
 
 const levelStore = useLevelStore();
 
@@ -15,14 +14,12 @@ const tileValue = computed({
 		}
 	},
 	set: (newValue) => {
-		if (levelStore.currEditTile !== undefined) {
-			levelStore.currEditTile.value = newValue;
-		}
+		levelStore.editCurrentTileValue(newValue);
 	},
 });
 </script>
 <template>
-	<Section>
+	<SectionComponent>
 		<template v-slot:title>Tile Properties</template>
 		<template v-slot:content>
 			<div
@@ -61,5 +58,5 @@ const tileValue = computed({
 				/>
 			</div>
 		</template>
-	</Section>
+	</SectionComponent>
 </template>

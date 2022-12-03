@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onActivated, reactive, ref } from "vue";
+import { computed, onActivated, ref } from "vue";
 import { useVuelidate } from "@vuelidate/core";
 import { required, email, minLength } from "@vuelidate/validators";
 import { signInWithEmailAndPassword, getAuth } from "firebase/auth";
@@ -30,7 +30,7 @@ const submitForm = async () => {
 		store.userDetails.email,
 		store.userDetails.password
 	)
-		.then((data) => {
+		.then(() => {
 			v$.value.$reset();
 			store.clearData();
 			router.push("/editor");

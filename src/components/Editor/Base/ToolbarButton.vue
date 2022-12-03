@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import type { ToolBarOption } from "@/types/editorTypes";
+import type { ToolBarOption } from "@/types/toolBarOptionType";
 import { useEditorStore } from "@/stores/editorStore";
 
 const editorStore = useEditorStore();

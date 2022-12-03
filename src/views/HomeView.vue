@@ -1,11 +1,11 @@
 <script setup lang="ts">
-import gsap from 'gsap';
-import { RouterLink } from 'vue-router';
-import { onMounted } from 'vue';
+import gsap from "gsap";
+import { RouterLink } from "vue-router";
+import { onMounted } from "vue";
 
 onMounted(() => {
 	gsap.fromTo(
-		'#title',
+		"#title",
 		{
 			opacity: 0,
 		},
@@ -17,7 +17,7 @@ onMounted(() => {
 	);
 
 	gsap.fromTo(
-		'#details',
+		"#details",
 		{
 			opacity: 0,
 			y: 50,
@@ -43,9 +43,17 @@ onMounted(() => {
 				>
 					<img src="../assets/add.svg" alt="" class="w-6 lg:w-8" />
 
-					<img src="../assets/subtract.svg" alt="" class="w-6 lg:w-8" />
+					<img
+						src="../assets/subtract.svg"
+						alt=""
+						class="w-6 lg:w-8"
+					/>
 
-					<img src="../assets/multiply.svg" alt="" class="w-6 lg:w-8" />
+					<img
+						src="../assets/multiply.svg"
+						alt=""
+						class="w-6 lg:w-8"
+					/>
 
 					<img src="../assets/divide.svg" alt="" class="w-6 lg:w-8" />
 				</div>

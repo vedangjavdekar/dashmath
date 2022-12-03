@@ -7,7 +7,7 @@ import TileProperties from "@/components/Editor/Tiles/TileProperties/TilePropert
 import { onMounted } from "vue";
 import { useEditorStore } from "@/stores/editorStore";
 import { toolBarOptions } from "@/stores/toolBarOptions";
-import Simulator from "@/components/Editor/Simulator/Simulator.vue";
+import Simulator from "@/components/Editor/Simulator/SimulatorComponent.vue";
 import ToolBarButton from "@/components/Editor/Base/ToolbarButton.vue";
 
 let auth;

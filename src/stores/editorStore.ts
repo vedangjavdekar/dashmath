@@ -132,7 +132,7 @@ export const useEditorStore = defineStore("editorData", () => {
 	function selectNextTile() {
 		const currTiles = getTilesForCurrSelectedLayer();
 		if (currTiles !== undefined) {
-			let index = currTiles.findIndex((tile) => {
+			const index = currTiles.findIndex((tile) => {
 				return tile.id === currSelectedTile.value;
 			});
 
