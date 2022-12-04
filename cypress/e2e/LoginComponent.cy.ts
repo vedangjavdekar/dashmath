@@ -1,5 +1,7 @@
 describe("Login Tests", () => {
 	it("Email is correct and Password is correct", () => {
+		cy.viewport(1920, 1080);
+
 		cy.visit("/");
 		cy.contains("Get Started").click();
 		cy.url().should(
@@ -14,8 +16,10 @@ describe("Login Tests", () => {
 		cy.get("#btn_submit").click();
 
 		cy.url().should("be.equal", `${Cypress.config("baseUrl")}/editor`);
+		cy.get("#btn_signout").click();
 	});
 	it("Email is doesn't exist", () => {
+		cy.viewport(1920, 1080);
 		cy.visit("/");
 		cy.contains("Get Started").click();
 		cy.url().should(

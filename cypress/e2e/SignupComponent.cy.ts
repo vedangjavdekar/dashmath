@@ -3,6 +3,7 @@ describe("Signup Tests", () => {
 		const testEmail = "vedang.javdekarmit@gmail.com";
 		const testPassword = "123456";
 
+		cy.viewport(1920, 1080);
 		cy.visit("/");
 		cy.contains("Get Started").click();
 		cy.url().should(
@@ -12,7 +13,7 @@ describe("Signup Tests", () => {
 
 		cy.contains("Signup").click();
 
-		cy.get("#email").wait(400).type(testEmail);
+		cy.wait(400).get("#email").type(testEmail);
 		cy.get("#btn_submit").should("be.disabled");
 
 		cy.get("#password").type(testPassword);

@@ -42,6 +42,7 @@ onMounted(() => {
 				</div>
 				<div class="mr-4">
 					<button
+						id="btn_signout"
 						@click="SignOutUser"
 						class="px-4 py-2 rounded bg-gray-200 text-black font-medium transition-all duration-300 hover:bg-sky-400 hover:text-white"
 					>

@@ -41,10 +41,12 @@ const getCurrentUser = () => {
 
 router.beforeEach(async (to, from, next) => {
 	if (to.matched.some((record) => record.meta.requiresAuth)) {
-		next();
-		if (await !getCurrentUser()) {
+		const user = await getCurrentUser();
+		if (user === null) {
 			alert("Please Login or Signup to access the editor");
 			next("/authentication");
+		} else {
+			next();
 		}
 	} else {
 		next();
