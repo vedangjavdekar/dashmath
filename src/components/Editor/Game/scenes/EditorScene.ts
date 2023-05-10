@@ -292,6 +292,7 @@ export default class EditorScene extends Scene {
 		const levelTileData = this.editorStore.getTileById(tileData.tileId);
 		if (levelTileData) {
 			tileText.setFixedSize(this.CELL_SIZE, this.CELL_SIZE);
+			tileText.setFontSize(12);
 			if (tileData.hasValue) {
 				const valueString = levelTileData.boardName.split("{");
 				valueString[1] = tileData.value.toString();
